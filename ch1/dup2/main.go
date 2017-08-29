@@ -16,7 +16,9 @@ import (
 
 func main() {
 	counts := make(map[string]int)
+	fileHits := make(map[string][]string)
 	files := os.Args[1:]
+
 	if len(files) == 0 {
 		countLines(os.Stdin, counts)
 	} else {
@@ -26,13 +28,18 @@ func main() {
 				fmt.Fprintf(os.Stderr, "dup2: %v\n", err)
 				continue
 			}
-			countLines(f, counts)
+			tempCounts := make(map[string]int)
+			countLines(f, tempCounts)
+			for line, n := range tempCounts {
+				counts[line] += n
+				fileHits[line] = append(fileHits[line], arg)
+			}
 			f.Close()
 		}
 	}
 	for line, n := range counts {
 		if n > 1 {
-			fmt.Printf("%d\t%s\n", n, line)
+			fmt.Printf("%d\t%s\t%v\n", n, line, fileHits[line])
 		}
 	}
 }
