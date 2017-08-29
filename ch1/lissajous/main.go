@@ -28,20 +28,35 @@ import (
 
 //!+main
 
-var palette = []color.Color{color.White, color.Black}
+var palette = createPalette()
 
 const (
-	whiteIndex = 0 // first color in palette
-	blackIndex = 1 // next color in palette
+	bgIndex = 0 // first color in palette
+	fgIndex = 1
+	numColours = 16
 )
+
+func randomColour() color.Color {
+	return color.RGBA { uint8(rand.Intn(256)), uint8(rand.Intn(256)), uint8(rand.Intn(256)), 0xFF }
+}
+
+func createPalette() []color.Color {
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	palette := []color.Color{color.Black}
+
+	for c := 0; c < numColours; c++ {
+		palette = append(palette, randomColour())
+	}
+
+	return palette
+}
 
 func main() {
 	//!-main
 	// The sequence of images is deterministic unless we seed
 	// the pseudo-random number generator using the current time.
 	// Thanks to Randall McPherson for pointing out the omission.
-	rand.Seed(time.Now().UTC().UnixNano())
-
 	if len(os.Args) > 1 && os.Args[1] == "web" {
 		//!+http
 		handler := func(w http.ResponseWriter, r *http.Request) {
@@ -54,6 +69,10 @@ func main() {
 	}
 	//!+main
 	lissajous(os.Stdout)
+}
+
+func getRandomColourIndex() uint8 {
+	return uint8(rand.Intn(numColours+1))
 }
 
 func lissajous(out io.Writer) {
@@ -74,7 +93,7 @@ func lissajous(out io.Writer) {
 			x := math.Sin(t)
 			y := math.Sin(t*freq + phase)
 			img.SetColorIndex(size+int(x*size+0.5), size+int(y*size+0.5),
-				blackIndex)
+				uint8(t))
 		}
 		phase += 0.1
 		anim.Delay = append(anim.Delay, delay)
