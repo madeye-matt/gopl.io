@@ -31,13 +31,13 @@ import (
 var palette = createPalette()
 
 const (
-	bgIndex = 0 // first color in palette
-	fgIndex = 1
+	bgIndex    = 0 // first color in palette
+	fgIndex    = 1
 	numColours = 16
 )
 
 func randomColour() color.Color {
-	return color.RGBA { uint8(rand.Intn(256)), uint8(rand.Intn(256)), uint8(rand.Intn(256)), 0xFF }
+	return color.RGBA{uint8(rand.Intn(256)), uint8(rand.Intn(256)), uint8(rand.Intn(256)), 0xFF}
 }
 
 func createPalette() []color.Color {
@@ -72,7 +72,7 @@ func main() {
 }
 
 func getRandomColourIndex() uint8 {
-	return uint8(rand.Intn(numColours+1))
+	return uint8(rand.Intn(numColours + 1))
 }
 
 func lissajous(out io.Writer) {
